@@ -1,6 +1,7 @@
 package LITTLe
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -36,4 +37,14 @@ type TestSuite struct {
 	TestCases   []TestCase
 	Title       string
 	Description string
+}
+
+// ReportError ths error is used for an TestUnit-Fail
+type ReportError struct {
+	TestStep         *TestStep
+	ActualStatusCode int
+}
+
+func (e ReportError) Error() string {
+	return fmt.Sprintf("TestCase '%s' failed - Expected StatusCode: '%d' Actual StatusCode: '%d'", e.TestStep.Title, e.TestStep.ExpectedStatus, e.ActualStatusCode)
 }

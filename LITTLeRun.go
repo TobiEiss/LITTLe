@@ -1,10 +1,8 @@
 package LITTLe
 
 import (
-	"errors"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 // Run is the implenetation to run a TestStep.
@@ -16,7 +14,7 @@ func (ts TestStep) Run() error {
 
 	// check response
 	if response.StatusCode != ts.ExpectedStatus {
-		return errors.New("ExpectedStatus: " + strconv.Itoa(ts.ExpectedStatus) + " But response is: " + strconv.Itoa(response.StatusCode))
+		return ReportError{ActualStatusCode: response.StatusCode, TestStep: &ts}
 	}
 
 	return nil
