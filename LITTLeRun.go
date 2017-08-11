@@ -22,24 +22,7 @@ func (ts TestStep) Run() error {
 
 // Run is the implementation to run a TestCase.
 func (tc TestCase) Run() error {
-	// run before
-	for _, tc := range tc.Before {
-		err := tc.Run()
-		if err != nil {
-			return err
-		}
-	}
-
-	// run testUnits
-	for _, tc := range tc.TestUnits {
-		err := tc.Run()
-		if err != nil {
-			return err
-		}
-	}
-
-	// run After
-	for _, tc := range tc.After {
+	for _, tc := range append(tc.Before, append(tc.TestUnits, tc.After...)...) {
 		err := tc.Run()
 		if err != nil {
 			return err
