@@ -65,3 +65,33 @@ func TestATestCase(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestATestSuite(t *testing.T) {
+	// create test-server
+	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Hello, client")
+	}))
+	defer testServer.Close()
+
+	// create TestStep
+	testStep := LITTLe.TestStep{}
+	request, err := http.NewRequest("GET", testServer.URL, nil)
+	if err != nil {
+		log.Println(err)
+		t.Fail()
+	}
+	testStep.ExpectedStatus = 200
+	testStep.Request = request
+
+	// create TestCase
+	testCase := LITTLe.TestCase{}
+	testCase.Before = []LITTLe.TestUnit{testCase}
+	testCase.TestUnits = []LITTLe.TestUnit{testCase}
+	testCase.After = []LITTLe.TestUnit{testCase}
+
+	// create testSuite
+	testSuite := LITTLe.TestSuite{TestCases: []LITTLe.TestCase{testCase}}
+
+	// run testCase
+	testSuite.RunTestSuite()
+}
