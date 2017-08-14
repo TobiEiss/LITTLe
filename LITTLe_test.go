@@ -10,11 +10,15 @@ import (
 	"github.com/TobiEiss/LITTLe"
 )
 
-func TestATestStep(t *testing.T) {
-	// create test-server
-	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func testServer() *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Hello, client")
 	}))
+}
+
+func TestATestStep(t *testing.T) {
+	// create test-server
+	testServer := testServer()
 	defer testServer.Close()
 
 	// create TestStep
@@ -35,11 +39,32 @@ func TestATestStep(t *testing.T) {
 	}
 }
 
+func TestFailATestStep(t *testing.T) {
+	// create test-server
+	testServer := testServer()
+	defer testServer.Close()
+
+	// create TestStep
+	testStep := LITTLe.TestStep{}
+	request, err := http.NewRequest("GET", testServer.URL, nil)
+	if err != nil {
+		log.Println(err)
+		t.Fail()
+	}
+	testStep.ExpectedStatus = 201
+	testStep.Request = request
+
+	// run testStep
+	err = testStep.Run()
+	if err == nil {
+		log.Println("Expected a failure")
+		t.Fail()
+	}
+}
+
 func TestATestCase(t *testing.T) {
 	// create test-server
-	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello, client")
-	}))
+	testServer := testServer()
 	defer testServer.Close()
 
 	// create TestStep
@@ -68,9 +93,7 @@ func TestATestCase(t *testing.T) {
 
 func TestATestSuite(t *testing.T) {
 	// create test-server
-	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello, client")
-	}))
+	testServer := testServer()
 	defer testServer.Close()
 
 	// create TestStep
