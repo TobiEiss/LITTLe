@@ -1,6 +1,7 @@
 package LITTLe_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,16 +24,14 @@ func TestATestStep(t *testing.T) {
 
 	// create TestStep
 	testStep := LITTLe.TestStep{}
-	request, err := http.NewRequest("GET", testServer.URL, nil)
-	if err != nil {
-		log.Println(err)
-		t.Fail()
-	}
 	testStep.ExpectedStatus = 200
-	testStep.Request = request
+	testStep.Request = LITTLe.Request{
+		Methode: "GET",
+		URL:     testServer.URL,
+	}
 
 	// run testStep
-	err = testStep.Run()
+	err := testStep.Run()
 	if err != nil {
 		log.Println(err)
 		t.Fail()
@@ -46,16 +45,14 @@ func TestFailATestStep(t *testing.T) {
 
 	// create TestStep
 	testStep := LITTLe.TestStep{}
-	request, err := http.NewRequest("GET", testServer.URL, nil)
-	if err != nil {
-		log.Println(err)
-		t.Fail()
-	}
 	testStep.ExpectedStatus = 201
-	testStep.Request = request
+	testStep.Request = LITTLe.Request{
+		Methode: "GET",
+		URL:     testServer.URL,
+	}
 
 	// run testStep
-	err = testStep.Run()
+	err := testStep.Run()
 	if err == nil {
 		log.Println("Expected a failure")
 		t.Fail()
@@ -69,13 +66,11 @@ func TestATestCase(t *testing.T) {
 
 	// create TestStep
 	testStep := LITTLe.TestStep{}
-	request, err := http.NewRequest("GET", testServer.URL, nil)
-	if err != nil {
-		log.Println(err)
-		t.Fail()
-	}
 	testStep.ExpectedStatus = 200
-	testStep.Request = request
+	testStep.Request = LITTLe.Request{
+		Methode: "GET",
+		URL:     testServer.URL,
+	}
 
 	// create TestCase
 	testCase := LITTLe.TestCase{}
@@ -84,7 +79,7 @@ func TestATestCase(t *testing.T) {
 	testCase.After = []LITTLe.TestUnit{testCase}
 
 	// run testCase
-	err = testCase.Run()
+	err := testCase.Run()
 	if err != nil {
 		log.Println(err)
 		t.Fail()
@@ -98,13 +93,11 @@ func TestATestSuite(t *testing.T) {
 
 	// create TestStep
 	testStep := LITTLe.TestStep{}
-	request, err := http.NewRequest("GET", testServer.URL, nil)
-	if err != nil {
-		log.Println(err)
-		t.Fail()
-	}
 	testStep.ExpectedStatus = 200
-	testStep.Request = request
+	testStep.Request = LITTLe.Request{
+		Methode: "GET",
+		URL:     testServer.URL,
+	}
 
 	// create TestCase
 	testCase := LITTLe.TestCase{}
@@ -117,4 +110,24 @@ func TestATestSuite(t *testing.T) {
 
 	// run testCase
 	testSuite.RunTestSuite()
+}
+
+func TestMarshal(t *testing.T) {
+	// create TestStep
+	testStep := LITTLe.TestStep{}
+	testStep.ExpectedStatus = 200
+	testStep.Request = LITTLe.Request{
+		Methode: "GET",
+		URL:     "www.url.de",
+	}
+
+	// marshal testStep
+	jsonByte, err := json.Marshal(testStep)
+	if err != nil {
+		log.Println(err)
+		t.Fail()
+	}
+	if string(jsonByte) != `{"request":{"methode":"GET","url":"www.url.de"},"expectedStatus":200}` {
+		t.Fail()
+	}
 }

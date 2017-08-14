@@ -1,13 +1,26 @@
 package LITTLe
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 )
 
 // Run is the implenetation to run a TestStep.
 func (ts TestStep) Run() error {
-	response, err := (&http.Client{}).Do(ts.Request)
+	// build request
+	bodyByte, err := json.Marshal(ts.Request.Body)
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest(ts.Request.Methode, ts.Request.URL, bytes.NewReader(bodyByte))
+	if err != nil {
+		return err
+	}
+
+	// do request
+	response, err := (&http.Client{}).Do(request)
 	if err != nil {
 		return err
 	}
