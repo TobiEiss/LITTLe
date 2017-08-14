@@ -22,18 +22,18 @@ type TestStep struct {
 // It represent a test-case. Reuse this in all your TestSuites
 // Use "Before" and "After" to
 type TestCase struct {
-	Before      []TestUnit
-	TestUnits   []TestUnit
-	After       []TestUnit
-	Title       string
+	Before      []TestUnit `json:"before,omitempty"`
+	TestUnits   []TestUnit `json:"testUnits,omitemtpy"`
+	After       []TestUnit `json:"after,omitempty"`
+	Title       string     `json:"title,omitempty"`
 	Description string
 }
 
 // TestSuite represent a batch of TestCases
 type TestSuite struct {
-	TestCases   []TestCase
-	Title       string
-	Description string
+	TestCases   []TestCase `json:"testCases,omitempty"`
+	Title       string     `json:"title,omitempty"`
+	Description string     `json:"description,omitempty"`
 }
 
 // ReportError ths error is used for an TestUnit-Fail
