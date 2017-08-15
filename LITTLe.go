@@ -52,3 +52,18 @@ type Request struct {
 func (e ReportError) Error() string {
 	return fmt.Sprintf("TestCase '%s' failed - Expected StatusCode: '%d' Actual StatusCode: '%d'", e.TestStep.Title, e.TestStep.ExpectedStatus, e.ActualStatusCode)
 }
+
+// BuildTestStep to build testSteps faster
+func BuildTestStep(title string, description string, expectedStatus int, methode string, URL string, body string, header map[string]string) TestStep {
+	return TestStep{
+		Title:          title,
+		Description:    description,
+		ExpectedStatus: expectedStatus,
+		Request: Request{
+			Methode: methode,
+			URL:     URL,
+			Body:    body,
+			Header:  header,
+		},
+	}
+}
